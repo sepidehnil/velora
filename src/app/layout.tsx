@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Shoea — Premium Footwear",
+  title: "Velora — Premium Footwear",
   description:
     "Discover curated premium sneakers and shoes from the world's most iconic brands.",
 };

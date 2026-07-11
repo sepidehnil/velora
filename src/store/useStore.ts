@@ -84,7 +84,7 @@ export const useStore = create<StoreState>()(
       isInWishlist: (productId) => get().wishlist.includes(productId),
     }),
     {
-      name: "shoea-store",
+      name: "velora-store",
       partialize: (state) => ({
         cart: state.cart,
         wishlist: state.wishlist,

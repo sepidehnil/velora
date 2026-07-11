@@ -31,7 +31,7 @@ export default function Footer() {
         <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-5">
           <div className="lg:col-span-2">
             <Link href="/" className="font-heading text-3xl font-bold">
-              Shoea
+              Velora
             </Link>
             <p className="mt-4 max-w-sm text-sm leading-relaxed text-stone/80">
               Premium footwear curated for those who appreciate craftsmanship,
@@ -74,7 +74,7 @@ export default function Footer() {
 
         <div className="mt-16 flex flex-col items-center justify-between gap-4 border-t border-stone/20 pt-8 md:flex-row">
           <p className="text-xs text-stone/60">
-            &copy; {new Date().getFullYear()} Shoea. All rights reserved.
+            &copy; {new Date().getFullYear()} Velora. All rights reserved.
           </p>
           <div className="flex gap-6 text-xs text-stone/60">
             <Link href="#" className="transition-colors hover:text-cream">

@@ -79,7 +79,7 @@ export default function Header() {
               : "text-charcoal hover:text-accent"
           )}
         >
-          Shoea
+          Velora
         </Link>
 
         <nav className="hidden items-center gap-8 lg:flex" aria-label="Main">

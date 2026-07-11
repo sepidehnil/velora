@@ -1,8 +1,6 @@
-# Shoea - Sneakers & Shoes E-Commerce
+# Velora - Premium Footwear E-Commerce
 
-A modern mobile-first shoe e-commerce app built with **Next.js 14**, **React**, **TypeScript**, **Material UI**, and **Tailwind CSS**.
-
-Based on the Shoea exercise design (onboarding, login, home, product detail, cart, orders, wallet, profile).
+A premium shoe e-commerce site built with **Next.js 14**, **React**, **TypeScript**, **Tailwind CSS**, and **Framer Motion**.
 
 ## Features
 

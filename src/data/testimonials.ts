@@ -15,7 +15,7 @@ export const testimonials: Testimonial[] = [
     name: "James Chen",
     role: "Marathon Runner",
     content:
-      "I've tried dozens of brands. Shoea delivers the perfect balance of performance and aesthetics.",
+      "I've tried dozens of brands. Velora delivers the perfect balance of performance and aesthetics.",
     rating: 5,
     avatar: "/images/avatars/2.png",
   },
