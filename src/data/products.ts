@@ -18,7 +18,7 @@ export const products: Product[] = [
     brand: "K-Swiss",
     category: "training",
     price: 85,
-    image: "/images/products/1.jpg",
+    image: "/images/products/1.png",
     description:
       "Premium training shoes built for comfort and performance. Engineered mesh upper with responsive cushioning for all-day wear.",
     sizes: [40, 41, 42, 43],
@@ -34,7 +34,7 @@ export const products: Product[] = [
     category: "basketball",
     price: 210,
     originalPrice: 250,
-    image: "/images/products/2.jpg",
+    image: "/images/products/2.png",
     description:
       "Iconic retro basketball sneakers with premium leather upper. A timeless silhouette that defined an era of court culture.",
     sizes: [40, 41, 42, 43, 44],
@@ -48,7 +48,7 @@ export const products: Product[] = [
     brand: "Nike",
     category: "lifestyle",
     price: 175,
-    image: "/images/products/3.jpg",
+    image: "/images/products/3.png",
     description:
       "Full-length Max Air cushioning delivers all-day comfort. Sleek design inspired by Japanese bullet trains.",
     sizes: [40, 41, 42, 43],
@@ -62,7 +62,7 @@ export const products: Product[] = [
     brand: "Nike",
     category: "running",
     price: 160,
-    image: "/images/products/4.jpg",
+    image: "/images/products/4.png",
     description:
       "Engineered to help reduce injury and keep you running. React foam provides a soft, responsive ride mile after mile.",
     sizes: [39, 40, 41, 42, 43],
@@ -77,7 +77,7 @@ export const products: Product[] = [
     brand: "Nike",
     category: "running",
     price: 130,
-    image: "/images/products/5.jpg",
+    image: "/images/products/5.png",
     description:
       "Lightweight racing shoe with Zoom Air unit for responsive cushioning on race day. Built for speed.",
     sizes: [40, 41, 42],
@@ -91,7 +91,7 @@ export const products: Product[] = [
     brand: "Adidas",
     category: "running",
     price: 190,
-    image: "/images/products/6.jpg",
+    image: "/images/products/6.png",
     description:
       "Responsive Boost midsole and Primeknit upper for a sock-like fit and incredible energy return.",
     sizes: [40, 41, 42, 43],
@@ -105,7 +105,7 @@ export const products: Product[] = [
     brand: "Puma",
     category: "lifestyle",
     price: 120,
-    image: "/images/products/7.jpg",
+    image: "/images/products/7.png",
     description:
       "Bold retro runner with chunky silhouette and RS cushioning technology for everyday comfort.",
     sizes: [39, 40, 41, 42],
@@ -118,7 +118,7 @@ export const products: Product[] = [
     brand: "Reebok",
     category: "lifestyle",
     price: 95,
-    image: "/images/products/8.jpg",
+    image: "/images/products/8.png",
     description:
       "Timeless leather sneaker that never goes out of style. Soft garment leather upper with heritage detailing.",
     sizes: [40, 41, 42, 43],
@@ -131,7 +131,7 @@ export const products: Product[] = [
     brand: "Asics",
     category: "running",
     price: 165,
-    image: "/images/products/9.jpg",
+    image: "/images/products/9.png",
     description:
       "Stability running shoe with GEL technology cushioning and FlyteFoam midsole for long-distance comfort.",
     sizes: [40, 41, 42, 43, 44],
@@ -144,7 +144,7 @@ export const products: Product[] = [
     brand: "Converse",
     category: "lifestyle",
     price: 90,
-    image: "/images/products/10.jpg",
+    image: "/images/products/10.png",
     description:
       "Premium take on the classic Chuck Taylor with thicker canvas and cushioned footbed for modern comfort.",
     sizes: [39, 40, 41, 42, 43],
@@ -157,7 +157,7 @@ export const products: Product[] = [
     brand: "New Balance",
     category: "lifestyle",
     price: 185,
-    image: "/images/products/11.jpg",
+    image: "/images/products/11.png",
     description:
       "Made in USA heritage runner with ENCAP midsole technology. The gold standard of premium casual footwear.",
     sizes: [40, 41, 42, 43, 44],
@@ -171,7 +171,7 @@ export const products: Product[] = [
     brand: "Nike",
     category: "basketball",
     price: 200,
-    image: "/images/products/12.jpg",
+    image: "/images/products/12.png",
     description:
       "Maximum cushioning and lockdown support for explosive court performance. Built for the game's greatest.",
     sizes: [42, 43, 44, 45],
@@ -182,6 +182,11 @@ export const products: Product[] = [
 
 export function getProductById(id: string): Product | undefined {
   return products.find((p) => p.id === id);
+}
+
+export function getProductsByBrand(brand: Brand | "All"): Product[] {
+  if (brand === "All") return products;
+  return products.filter((p) => p.brand === brand);
 }
 
 export function getProductsByCategory(category: Category | "all"): Product[] {
