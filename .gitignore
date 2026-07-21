@@ -8,5 +8,8 @@ out/
 .cursor/
 .vercel
 
-# local sqlite
+# local sqlite (keep committed seed DB for Vercel)
 *.db
+!prisma/seed.db
+.env
+.env*.local

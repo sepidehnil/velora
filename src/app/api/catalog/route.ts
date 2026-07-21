@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { mapDbProduct } from "@/lib/catalog";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   const [productsDb, categories, brands, showcase] = await Promise.all([
     prisma.product.findMany({

@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma";
 import { getOrCreateGuest } from "@/lib/guest";
 import { mapDbProduct } from "@/lib/catalog";
 
+export const dynamic = "force-dynamic";
+
 async function ensureCart(guestId: string) {
   const existing = await prisma.cart.findUnique({
     where: { guestId },

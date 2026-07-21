@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getOrCreateGuest } from "@/lib/guest";
 
+export const dynamic = "force-dynamic";
+
 async function payload(guestId: string) {
   const rows = await prisma.wishlistItem.findMany({
     where: { guestId },
