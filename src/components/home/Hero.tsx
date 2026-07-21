@@ -35,7 +35,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 22 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-            className="text-4xl font-bold leading-[1.15] text-charcoal sm:text-5xl md:text-6xl"
+            className="font-heading text-4xl font-semibold leading-[1.12] tracking-[-0.02em] text-charcoal sm:text-5xl md:text-6xl"
           >
             Pack for the trip —
             <br />

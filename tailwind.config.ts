@@ -26,8 +26,9 @@ const config: Config = {
         },
       },
       fontFamily: {
-        sans: ["Montserrat", "system-ui", "sans-serif"],
-        heading: ["Cormorant", "Georgia", "serif"],
+        sans: ["Figtree", "system-ui", "sans-serif"],
+        heading: ["Fraunces", "Georgia", "serif"],
+        brand: ["Fraunces", "Georgia", "serif"],
       },
       borderRadius: {
         card: "1.75rem",

@@ -11,7 +11,7 @@ export default function Footer() {
             <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-sage text-cream">
               <Tent size={16} />
             </span>
-            <span className="text-lg font-bold tracking-tight">VENTURA</span>
+            <span className="font-brand text-lg tracking-[0.08em]">VENTURA</span>
           </Link>
           <div className="flex flex-wrap justify-center gap-5 text-sm text-stone">
             <Link href="/products" className="hover:text-sage-dark">

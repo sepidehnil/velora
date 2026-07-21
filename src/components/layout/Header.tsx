@@ -57,7 +57,7 @@ export default function Header() {
           <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-sage text-cream">
             <Tent size={17} strokeWidth={2.25} />
           </span>
-          <span className="text-lg font-bold tracking-tight sm:text-xl">
+          <span className="font-brand text-lg tracking-[0.08em] sm:text-xl">
             VENTURA
           </span>
         </Link>
