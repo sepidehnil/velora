@@ -1,14 +1,14 @@
 export type Brand =
-  | "Nike"
-  | "Reebok"
-  | "Adidas"
-  | "New Balance"
-  | "Puma"
-  | "Converse"
-  | "Asics"
-  | "K-Swiss";
+  | "Jack Wolfskin"
+  | "Kovea"
+  | "Glaree"
+  | "Pezan"
+  | "Cordura"
+  | "Deuter"
+  | "MSR"
+  | "Naturehike";
 
-export type Category = "running" | "lifestyle" | "basketball" | "training";
+export type Category = "backpacks" | "tents" | "lighting" | "furniture" | "accessories";
 
 export interface Product {
   id: string;
@@ -18,35 +18,21 @@ export interface Product {
   price: number;
   originalPrice?: number;
   image: string;
-  images?: string[];
   description: string;
-  sizes: number[];
   rating: number;
   reviewCount: number;
   isPopular?: boolean;
   isNew?: boolean;
-  colors?: string[];
 }
 
 export interface CartItem {
   product: Product;
-  size: number;
   quantity: number;
-}
-
-export interface Testimonial {
-  id: string;
-  name: string;
-  role: string;
-  content: string;
-  rating: number;
-  avatar: string;
 }
 
 export interface CategoryItem {
   id: Category;
   name: string;
-  description: string;
   image: string;
   productCount: number;
 }

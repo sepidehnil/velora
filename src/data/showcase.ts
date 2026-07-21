@@ -3,22 +3,22 @@ import { ShowcaseItem } from "@/types";
 export const showcaseItems: ShowcaseItem[] = [
   {
     id: "1",
-    title: "Crafted for Movement",
-    subtitle: "Performance Collection",
+    title: "Jack Wolfskin",
+    subtitle: "Trail Ready Packs",
     description:
-      "Every stitch, every sole, every detail engineered for athletes who refuse to compromise. Experience footwear that moves with you.",
-    image: "/images/showcase/1.png",
-    cta: "Explore Performance",
-    href: "/products?category=running",
+      "Discover durable backpacks built for multi-day hikes, weekend getaways, and every path in between.",
+    image: "/images/products/12.png",
+    cta: "View Collection",
+    href: "/products?category=backpacks",
   },
   {
     id: "2",
-    title: "Icons Reimagined",
-    subtitle: "Heritage Series",
+    title: "Basecamp Essentials",
+    subtitle: "Sleep Under the Stars",
     description:
-      "Timeless silhouettes meet contemporary craftsmanship. Discover sneakers that transcend trends and define generations.",
-    image: "/images/showcase/2.png",
-    cta: "View Heritage",
-    href: "/products?category=lifestyle",
+      "Tents, sleeping bags, and camp furniture designed for comfort when the trail ends.",
+    image: "/images/products/2.png",
+    cta: "Shop Tents",
+    href: "/products?category=tents",
   },
 ];

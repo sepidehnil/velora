@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useEffect } from "react";
 import ProductImage from "@/components/ui/ProductImage";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -20,20 +21,35 @@ import Button from "@/components/ui/Button";
 import ProductCard from "@/components/products/ProductCard";
 import PageTransition from "@/components/motion/PageTransition";
 import ScrollReveal, { StaggerReveal, StaggerItem } from "@/components/motion/ScrollReveal";
-import { getProductById, getRelatedProducts } from "@/data/products";
+import { useCatalog } from "@/hooks/useCatalog";
 import { useStore } from "@/store/useStore";
 import { formatPrice } from "@/lib/utils";
 import { tapScale } from "@/lib/animations";
+import { Product } from "@/types";
 
 export default function ProductDetailPage() {
   const params = useParams();
   const router = useRouter();
-  const product = getProductById(params.id as string);
+  const { products } = useCatalog();
+  const [product, setProduct] = useState<Product | null>(null);
   const { addToCart, toggleWishlist, isInWishlist } = useStore();
 
-  const [selectedSize, setSelectedSize] = useState<number | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
+
+  useEffect(() => {
+    const local = products.find((p) => p.id === (params.id as string));
+    if (local) {
+      setProduct(local);
+      return;
+    }
+
+    fetch(`/api/products/${params.id as string}`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data?.product) setProduct(data.product as Product);
+      });
+  }, [params.id, products]);
 
   if (!product) {
     return (
@@ -48,12 +64,13 @@ export default function ProductDetailPage() {
     );
   }
 
-  const related = getRelatedProducts(product);
+  const related = products
+    .filter((p) => p.id !== product.id && p.category === product.category)
+    .slice(0, 4);
   const wished = isInWishlist(product.id);
 
   const handleAddToCart = () => {
-    if (!selectedSize) return;
-    addToCart({ product, size: selectedSize, quantity });
+    addToCart({ product, quantity });
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   };
@@ -61,7 +78,7 @@ export default function ProductDetailPage() {
   return (
     <MainLayout>
       <PageTransition>
-        <Container className="pt-28 pb-8 md:pt-32">
+        <Container className="pb-8 pt-28 md:pt-32">
           <button
             type="button"
             onClick={() => router.back()}
@@ -73,7 +90,7 @@ export default function ProductDetailPage() {
 
           <div className="grid gap-10 lg:grid-cols-2 lg:gap-16">
             <ScrollReveal direction="left">
-              <div className="relative aspect-square overflow-hidden bg-sand">
+              <div className="relative aspect-square overflow-hidden rounded-card bg-sage-soft">
                 <ProductImage
                   src={product.image}
                   alt={product.name}
@@ -89,10 +106,10 @@ export default function ProductDetailPage() {
               <div className="flex flex-col">
                 <div className="flex items-start justify-between">
                   <div>
-                    <p className="text-xs font-medium uppercase tracking-widest text-accent">
+                    <p className="text-xs font-semibold uppercase tracking-widest text-sage">
                       {product.brand}
                     </p>
-                    <h1 className="mt-2 font-heading text-3xl font-bold text-charcoal md:text-4xl lg:text-5xl">
+                    <h1 className="mt-2 text-3xl font-bold text-charcoal md:text-4xl">
                       {product.name}
                     </h1>
                   </div>
@@ -100,7 +117,7 @@ export default function ProductDetailPage() {
                     type="button"
                     whileTap={tapScale}
                     onClick={() => toggleWishlist(product.id)}
-                    className="flex h-11 w-11 items-center justify-center border border-sand transition-colors hover:border-accent"
+                    className="flex h-11 w-11 items-center justify-center rounded-full border border-sand transition-colors hover:border-sage"
                     aria-label={wished ? "Remove from wishlist" : "Add to wishlist"}
                   >
                     <Heart
@@ -130,7 +147,7 @@ export default function ProductDetailPage() {
                 </div>
 
                 <div className="mt-6 flex items-center gap-3">
-                  <span className="text-2xl font-semibold text-charcoal">
+                  <span className="text-2xl font-bold text-charcoal">
                     {formatPrice(product.price)}
                   </span>
                   {product.originalPrice && (
@@ -146,36 +163,13 @@ export default function ProductDetailPage() {
 
                 <div className="mt-8">
                   <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-charcoal">
-                    Select Size
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {product.sizes.map((size) => (
-                      <motion.button
-                        key={size}
-                        type="button"
-                        whileTap={tapScale}
-                        onClick={() => setSelectedSize(size)}
-                        className={`flex h-12 min-w-[48px] cursor-pointer items-center justify-center border px-4 text-sm font-medium transition-all duration-200 ${
-                          selectedSize === size
-                            ? "border-charcoal bg-charcoal text-cream"
-                            : "border-sand text-charcoal hover:border-charcoal"
-                        }`}
-                      >
-                        {size}
-                      </motion.button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="mt-6">
-                  <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-charcoal">
                     Quantity
                   </p>
                   <div className="flex items-center gap-4">
                     <button
                       type="button"
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                      className="flex h-10 w-10 items-center justify-center border border-sand transition-colors hover:border-charcoal"
+                      className="flex h-10 w-10 items-center justify-center rounded-full border border-sand transition-colors hover:border-sage"
                       aria-label="Decrease quantity"
                     >
                       <Minus size={16} />
@@ -186,7 +180,7 @@ export default function ProductDetailPage() {
                     <button
                       type="button"
                       onClick={() => setQuantity(quantity + 1)}
-                      className="flex h-10 w-10 items-center justify-center border border-sand transition-colors hover:border-charcoal"
+                      className="flex h-10 w-10 items-center justify-center rounded-full border border-sand transition-colors hover:border-sage"
                       aria-label="Increase quantity"
                     >
                       <Plus size={16} />
@@ -195,11 +189,7 @@ export default function ProductDetailPage() {
                 </div>
 
                 <div className="mt-10 flex flex-col gap-3 sm:flex-row">
-                  <Button
-                    onClick={handleAddToCart}
-                    disabled={!selectedSize}
-                    className="flex-1 disabled:cursor-not-allowed disabled:opacity-50"
-                  >
+                  <Button onClick={handleAddToCart} className="flex-1">
                     <AnimatePresence mode="wait">
                       {added ? (
                         <motion.span
@@ -226,10 +216,11 @@ export default function ProductDetailPage() {
                       )}
                     </AnimatePresence>
                   </Button>
-                  <Link href="/cart" className="flex-1">
-                    <Button variant="outline" className="w-full">
-                      View Cart
-                    </Button>
+                  <Link
+                    href="/cart"
+                    className="btn-outline flex min-h-[48px] flex-1 items-center justify-center px-8 py-3 text-sm"
+                  >
+                    View Cart
                   </Link>
                 </div>
               </div>
@@ -238,10 +229,10 @@ export default function ProductDetailPage() {
         </Container>
 
         {related.length > 0 && (
-          <section className="section-padding bg-sand/30">
+          <section className="section-padding bg-sage-soft">
             <Container>
               <ScrollReveal className="mb-10">
-                <h2 className="font-heading text-3xl font-bold text-charcoal md:text-4xl">
+                <h2 className="text-3xl font-bold text-charcoal">
                   You May Also Like
                 </h2>
               </ScrollReveal>

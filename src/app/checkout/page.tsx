@@ -15,13 +15,17 @@ import { formatPrice } from "@/lib/utils";
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { cart, getCartTotal, clearCart } = useStore();
+  const { cart, getCartTotal, clearCart, init } = useStore();
   const [step, setStep] = useState<"form" | "success">("form");
   const [loading, setLoading] = useState(false);
 
   const total = getCartTotal();
   const shipping = total > 150 ? 0 : 12;
   const grandTotal = total + shipping;
+
+  useEffect(() => {
+    void init();
+  }, [init]);
 
   useEffect(() => {
     if (cart.length === 0 && step === "form") {
@@ -33,14 +37,33 @@ export default function CheckoutPage() {
     return null;
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
+
+    const formData = new FormData(e.currentTarget);
+    const payload = {
+      firstName: String(formData.get("firstName") ?? ""),
+      lastName: String(formData.get("lastName") ?? ""),
+      email: String(formData.get("email") ?? ""),
+      phone: String(formData.get("phone") ?? ""),
+      streetAddress: String(formData.get("streetAddress") ?? ""),
+      city: String(formData.get("city") ?? ""),
+      state: String(formData.get("state") ?? ""),
+      zipCode: String(formData.get("zipCode") ?? ""),
+    };
+
+    const res = await fetch("/api/checkout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    setLoading(false);
+    if (res.ok) {
       setStep("success");
       clearCart();
-    }, 1500);
+    }
   };
 
   if (step === "success") {
@@ -65,8 +88,11 @@ export default function CheckoutPage() {
                 email shortly with tracking details.
               </p>
             </div>
-            <Link href="/products">
-              <Button>Continue Shopping</Button>
+            <Link
+              href="/products"
+              className="btn-primary inline-flex min-h-[48px] items-center px-8 py-3 text-sm"
+            >
+              Continue Shopping
             </Link>
           </Container>
         </PageTransition>
@@ -103,24 +129,28 @@ export default function CheckoutPage() {
                     </legend>
                     <div className="grid gap-4 sm:grid-cols-2">
                       <input
+                        name="firstName"
                         type="text"
                         placeholder="First Name"
                         required
                         className="min-h-[48px] border border-sand bg-cream px-4 text-sm focus:border-accent focus:outline-none"
                       />
                       <input
+                        name="lastName"
                         type="text"
                         placeholder="Last Name"
                         required
                         className="min-h-[48px] border border-sand bg-cream px-4 text-sm focus:border-accent focus:outline-none"
                       />
                       <input
+                        name="email"
                         type="email"
                         placeholder="Email"
                         required
                         className="min-h-[48px] border border-sand bg-cream px-4 text-sm focus:border-accent focus:outline-none sm:col-span-2"
                       />
                       <input
+                        name="phone"
                         type="tel"
                         placeholder="Phone"
                         required
@@ -137,6 +167,7 @@ export default function CheckoutPage() {
                     </legend>
                     <div className="grid gap-4">
                       <input
+                        name="streetAddress"
                         type="text"
                         placeholder="Street Address"
                         required
@@ -144,18 +175,21 @@ export default function CheckoutPage() {
                       />
                       <div className="grid gap-4 sm:grid-cols-3">
                         <input
+                          name="city"
                           type="text"
                           placeholder="City"
                           required
                           className="min-h-[48px] border border-sand bg-cream px-4 text-sm focus:border-accent focus:outline-none"
                         />
                         <input
+                          name="state"
                           type="text"
                           placeholder="State"
                           required
                           className="min-h-[48px] border border-sand bg-cream px-4 text-sm focus:border-accent focus:outline-none"
                         />
                         <input
+                          name="zipCode"
                           type="text"
                           placeholder="ZIP Code"
                           required
@@ -205,7 +239,7 @@ export default function CheckoutPage() {
                   <div className="mt-4 max-h-48 space-y-3 overflow-y-auto">
                     {cart.map((item) => (
                       <div
-                        key={`${item.product.id}-${item.size}`}
+                        key={item.product.id}
                         className="flex justify-between text-sm"
                       >
                         <span className="text-stone">

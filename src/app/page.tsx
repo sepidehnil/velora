@@ -1,20 +1,20 @@
 import MainLayout from "@/components/layout/MainLayout";
 import Hero from "@/components/home/Hero";
-import FeaturedProducts from "@/components/home/FeaturedProducts";
 import Categories from "@/components/home/Categories";
+import FeaturedProducts from "@/components/home/FeaturedProducts";
 import ProductShowcase from "@/components/home/ProductShowcase";
-import Testimonials from "@/components/home/Testimonials";
-import Newsletter from "@/components/home/Newsletter";
+import NewArrivals from "@/components/home/NewArrivals";
+import BrandBar from "@/components/home/BrandBar";
 
 export default function HomePage() {
   return (
     <MainLayout>
       <Hero />
-      <FeaturedProducts />
       <Categories />
+      <FeaturedProducts />
       <ProductShowcase />
-      <Testimonials />
-      <Newsletter />
+      <NewArrivals />
+      <BrandBar />
     </MainLayout>
   );
 }

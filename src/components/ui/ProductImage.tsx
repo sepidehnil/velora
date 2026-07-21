@@ -39,7 +39,7 @@ export default function ProductImage({
         role="img"
         aria-label={alt}
       >
-        <span className="font-heading text-2xl text-charcoal/30">Velora</span>
+        <span className="text-2xl font-bold text-charcoal/30">Ventura</span>
       </div>
     );
   }

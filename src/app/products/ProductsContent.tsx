@@ -8,16 +8,17 @@ import Container from "@/components/ui/Container";
 import ProductCard from "@/components/products/ProductCard";
 import PageTransition from "@/components/motion/PageTransition";
 import ScrollReveal, { StaggerReveal, StaggerItem } from "@/components/motion/ScrollReveal";
-import { products, brands, searchProducts, getProductsByCategory } from "@/data/products";
+import { useCatalog } from "@/hooks/useCatalog";
 import { Brand, Category } from "@/types";
 import { cn } from "@/lib/utils";
 
 const categories: { id: Category | "all"; label: string }[] = [
   { id: "all", label: "All" },
-  { id: "running", label: "Running" },
-  { id: "lifestyle", label: "Lifestyle" },
-  { id: "basketball", label: "Basketball" },
-  { id: "training", label: "Training" },
+  { id: "backpacks", label: "Backpacks" },
+  { id: "tents", label: "Tents" },
+  { id: "lighting", label: "Lighting" },
+  { id: "furniture", label: "Furniture" },
+  { id: "accessories", label: "Accessories" },
 ];
 
 const sortOptions = [
@@ -30,6 +31,7 @@ const sortOptions = [
 export default function ProductsContent() {
   const searchParams = useSearchParams();
   const initialCategory = (searchParams.get("category") as Category) || "all";
+  const { products, brands: catalogBrands } = useCatalog();
 
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState<Category | "all">(initialCategory);
@@ -39,15 +41,22 @@ export default function ProductsContent() {
 
   const filtered = useMemo(() => {
     let result =
-      category === "all" ? products : getProductsByCategory(category);
+      category === "all"
+        ? products
+        : products.filter((p) => p.category === category);
 
     if (brand !== "All") {
       result = result.filter((p) => p.brand === brand);
     }
 
     if (search.trim()) {
-      const ids = new Set(searchProducts(search).map((p) => p.id));
-      result = result.filter((p) => ids.has(p.id));
+      const q = search.toLowerCase().trim();
+      result = result.filter(
+        (p) =>
+          p.name.toLowerCase().includes(q) ||
+          p.brand.toLowerCase().includes(q) ||
+          p.category.toLowerCase().includes(q)
+      );
     }
 
     switch (sort) {
@@ -62,23 +71,23 @@ export default function ProductsContent() {
           (a, b) => (b.isPopular ? 1 : 0) - (a.isPopular ? 1 : 0)
         );
     }
-  }, [search, category, brand, sort]);
+  }, [search, category, brand, sort, products]);
 
   return (
     <MainLayout>
       <PageTransition>
-        <section className="bg-charcoal pt-28 pb-16 md:pt-32 md:pb-20">
+        <section className="bg-sage pb-16 pt-28 md:pb-20 md:pt-32">
           <Container>
             <ScrollReveal>
-              <p className="mb-2 text-xs font-medium uppercase tracking-[0.2em] text-accent-light">
-                Collection
+              <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-sage-light">
+                Outdoor catalog
               </p>
-              <h1 className="font-heading text-4xl font-bold text-cream md:text-6xl">
-                Shop All
+              <h1 className="text-4xl font-bold text-cream md:text-6xl">
+                Shop All Gear
               </h1>
-              <p className="mt-4 max-w-lg text-sm text-stone/70">
-                Explore our curated selection of premium footwear from the
-                world&apos;s leading brands.
+              <p className="mt-4 max-w-lg text-sm text-cream/80">
+                Backpacks, tents, lighting, and camp essentials from trusted
+                outdoor brands.
               </p>
             </ScrollReveal>
           </Container>
@@ -95,8 +104,8 @@ export default function ProductsContent() {
                 type="search"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search products..."
-                className="w-full min-h-[48px] border border-sand bg-cream py-3 pl-11 pr-4 text-sm focus:border-accent focus:outline-none"
+                placeholder="Search camping gear..."
+                className="min-h-[48px] w-full rounded-full border border-sand bg-white py-3 pl-11 pr-4 text-sm focus:border-sage focus:outline-none"
                 aria-label="Search products"
               />
             </div>
@@ -104,7 +113,7 @@ export default function ProductsContent() {
               <button
                 type="button"
                 onClick={() => setShowFilters(!showFilters)}
-                className="btn-outline flex items-center gap-2 !min-h-[48px] md:hidden"
+                className="btn-outline flex !min-h-[48px] items-center gap-2 md:hidden"
               >
                 <SlidersHorizontal size={16} />
                 Filters
@@ -112,7 +121,7 @@ export default function ProductsContent() {
               <select
                 value={sort}
                 onChange={(e) => setSort(e.target.value)}
-                className="min-h-[48px] border border-sand bg-cream px-4 text-sm focus:border-accent focus:outline-none"
+                className="min-h-[48px] rounded-full border border-sand bg-white px-4 text-sm focus:border-sage focus:outline-none"
                 aria-label="Sort products"
               >
                 {sortOptions.map((opt) => (
@@ -142,9 +151,9 @@ export default function ProductsContent() {
                       type="button"
                       onClick={() => setCategory(cat.id)}
                       className={cn(
-                        "block w-full cursor-pointer py-2 text-left text-sm transition-colors",
+                        "block w-full cursor-pointer rounded-lg py-2 text-left text-sm transition-colors",
                         category === cat.id
-                          ? "font-semibold text-accent"
+                          ? "font-semibold text-sage-dark"
                           : "text-stone hover:text-charcoal"
                       )}
                     >
@@ -162,27 +171,27 @@ export default function ProductsContent() {
                     type="button"
                     onClick={() => setBrand("All")}
                     className={cn(
-                      "block w-full cursor-pointer py-2 text-left text-sm transition-colors",
+                      "block w-full cursor-pointer rounded-lg py-2 text-left text-sm transition-colors",
                       brand === "All"
-                        ? "font-semibold text-accent"
+                        ? "font-semibold text-sage-dark"
                         : "text-stone hover:text-charcoal"
                     )}
                   >
                     All Brands
                   </button>
-                  {brands.map((b) => (
+                  {catalogBrands.map((b) => (
                     <button
-                      key={b}
+                      key={b.name}
                       type="button"
-                      onClick={() => setBrand(b)}
+                      onClick={() => setBrand(b.name as Brand)}
                       className={cn(
-                        "block w-full cursor-pointer py-2 text-left text-sm transition-colors",
-                        brand === b
-                          ? "font-semibold text-accent"
+                        "block w-full cursor-pointer rounded-lg py-2 text-left text-sm transition-colors",
+                        brand === b.name
+                          ? "font-semibold text-sage-dark"
                           : "text-stone hover:text-charcoal"
                       )}
                     >
-                      {b}
+                      {b.label}
                     </button>
                   ))}
                 </div>

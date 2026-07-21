@@ -1,4 +1,5 @@
 node_modules/
+tsconfig.tsbuildinfo
 .next/
 out/
 .env*.local
@@ -6,3 +7,6 @@ out/
 .DS_Store
 .cursor/
 .vercel
+
+# local sqlite
+*.db

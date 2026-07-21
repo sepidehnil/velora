@@ -1,0 +1,140 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Guest {
+  id        String         @id @default(cuid())
+  token     String         @unique
+  createdAt DateTime       @default(now())
+
+  cart       Cart?
+  wishlistItems WishlistItem[]
+  orders     Order[]
+}
+
+model Cart {
+  id      String   @id @default(cuid())
+  guestId String   @unique
+  guest   Guest    @relation(fields: [guestId], references: [id], onDelete: Cascade)
+
+  items CartItem[]
+}
+
+model CartItem {
+  cartId    String
+  productId String
+  quantity  Int
+
+  cart    Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id])
+
+  @@id([cartId, productId])
+}
+
+model WishlistItem {
+  guestId  String
+  productId String
+  createdAt DateTime @default(now())
+
+  guest   Guest   @relation(fields: [guestId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id])
+
+  @@id([guestId, productId])
+}
+
+model Category {
+  id           String   @id
+  name         String
+  image        String
+  productCount Int?
+
+  products Product[]
+}
+
+model Brand {
+  id       String @id
+  name     String
+  label    String?
+
+  products Product[]
+}
+
+model Product {
+  id           String   @id
+  name         String
+  brandId      String
+  categoryId   String
+  brand        Brand    @relation(fields: [brandId], references: [id])
+  category     Category @relation(fields: [categoryId], references: [id])
+
+  price         Int
+  originalPrice Int?
+  description   String
+  rating        Float
+  reviewCount   Int
+  isPopular     Boolean @default(false)
+  isNew         Boolean @default(false)
+  image         String
+
+  cartItems     CartItem[]
+  wishlistItems WishlistItem[]
+
+  orderItems    OrderItem[]
+}
+
+model ShowcaseItem {
+  id          String @id
+  title       String
+  subtitle    String
+  description String
+  image       String
+  cta         String
+  href        String
+}
+
+model Order {
+  id String @id @default(cuid())
+
+  guestId String
+  guest   Guest  @relation(fields: [guestId], references: [id], onDelete: Cascade)
+
+  status   String   @default("confirmed")
+  firstName String
+  lastName  String
+  email     String
+  phone     String
+  streetAddress String
+  city      String
+  state     String
+  zipCode   String
+
+  shipping     Int
+  total        Int
+  grandTotal   Int
+
+  createdAt DateTime @default(now())
+
+  items OrderItem[]
+}
+
+model OrderItem {
+  id String @id @default(cuid())
+
+  orderId   String
+  order     Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+
+  productName String
+  unitPrice   Int
+  quantity    Int
+
+  @@index([orderId])
+}
+

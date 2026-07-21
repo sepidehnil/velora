@@ -13,12 +13,13 @@
 @import "@fontsource/cormorant/700.css";
 
 :root {
-  --color-cream: #faf9f6;
-  --color-charcoal: #1a1a1a;
-  --color-stone: #6b6b6b;
-  --color-sand: #e8e4df;
-  --color-accent: #a67c52;
-  --color-accent-light: #c9a87c;
+  --color-cream: #f3f7f3;
+  --color-charcoal: #17241e;
+  --color-stone: #5f7268;
+  --color-sand: #dce6de;
+  --color-sage: #6f9574;
+  --color-sage-dark: #4f6f54;
+  --color-accent: #e07a3d;
   --font-body: "Montserrat", system-ui, sans-serif;
   --font-heading: "Cormorant", Georgia, serif;
 }
@@ -43,19 +44,30 @@ body {
   overflow-x: hidden;
 }
 
-h1, h2, h3, h4, h5, h6, .font-heading {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.font-heading {
   font-family: var(--font-heading);
   font-weight: 600;
   letter-spacing: -0.02em;
 }
 
 ::selection {
-  background-color: rgba(166, 124, 82, 0.2);
+  background-color: rgba(111, 149, 116, 0.28);
   color: var(--color-charcoal);
 }
 
-.scrollbar-hide::-webkit-scrollbar { display: none; }
-.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
 
 @layer components {
   .container-main {
@@ -63,19 +75,27 @@ h1, h2, h3, h4, h5, h6, .font-heading {
   }
 
   .btn-primary {
-    @apply inline-flex min-h-[48px] cursor-pointer items-center justify-center gap-2 rounded-none bg-charcoal px-8 py-3 text-sm font-medium uppercase tracking-widest text-cream transition-all duration-300 hover:bg-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent;
+    @apply inline-flex min-h-[50px] cursor-pointer items-center justify-center gap-2 rounded-full bg-charcoal px-8 py-3 text-sm font-semibold tracking-wide text-cream shadow-card transition-all duration-300 hover:-translate-y-0.5 hover:bg-sage-dark hover:shadow-lift focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sage;
   }
 
   .btn-outline {
-    @apply inline-flex min-h-[48px] cursor-pointer items-center justify-center gap-2 rounded-none border border-charcoal bg-transparent px-8 py-3 text-sm font-medium uppercase tracking-widest text-charcoal transition-all duration-300 hover:bg-charcoal hover:text-cream focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent;
+    @apply inline-flex min-h-[50px] cursor-pointer items-center justify-center gap-2 rounded-full border border-charcoal/15 bg-white/60 px-8 py-3 text-sm font-semibold tracking-wide text-charcoal backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-sage hover:bg-sage hover:text-cream focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sage;
   }
 
   .btn-ghost {
-    @apply inline-flex min-h-[44px] cursor-pointer items-center justify-center gap-2 rounded-none px-4 py-2 text-sm font-medium text-charcoal transition-all duration-200 hover:text-accent;
+    @apply inline-flex min-h-[44px] cursor-pointer items-center justify-center gap-2 rounded-full px-4 py-2 text-sm font-medium text-charcoal transition-all duration-200 hover:text-sage-dark;
   }
 
   .section-padding {
-    @apply py-20 md:py-28 lg:py-32;
+    @apply py-16 md:py-24 lg:py-28;
+  }
+
+  .section-eyebrow {
+    @apply text-[11px] font-semibold uppercase tracking-[0.28em] text-sage;
+  }
+
+  .glass-pill {
+    @apply rounded-full border border-white/50 bg-white/90 shadow-soft backdrop-blur-md;
   }
 
   .text-balance {
@@ -84,8 +104,12 @@ h1, h2, h3, h4, h5, h6, .font-heading {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  *, *::before, *::after {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }

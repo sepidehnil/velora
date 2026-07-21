@@ -3,56 +3,43 @@
 import ProductImage from "@/components/ui/ProductImage";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowUpRight } from "lucide-react";
 import Container from "@/components/ui/Container";
 import ScrollReveal, { StaggerReveal, StaggerItem } from "@/components/motion/ScrollReveal";
-import { categories } from "@/data/categories";
+import { useCatalog } from "@/hooks/useCatalog";
 
 export default function Categories() {
+  const { categories } = useCatalog();
+
   return (
-    <section className="section-padding bg-charcoal">
+    <section className="bg-sage py-10 md:py-14">
       <Container>
-        <ScrollReveal className="mb-12 text-center md:mb-16">
-          <p className="mb-2 text-xs font-medium uppercase tracking-[0.2em] text-accent-light">
-            Browse by Style
-          </p>
-          <h2 className="font-heading text-4xl font-bold text-cream md:text-5xl">
-            Shop Categories
+        <ScrollReveal className="mb-6 text-center md:mb-8">
+          <h2 className="text-xl font-bold text-cream md:text-2xl">
+            Product Categories
           </h2>
         </ScrollReveal>
 
-        <StaggerReveal className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
+        <StaggerReveal className="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-5 lg:grid-cols-5">
           {categories.map((category) => (
             <StaggerItem key={category.id}>
-              <Link href={`/products?category=${category.id}`}>
+              <Link href={`/products?category=${category.id}`} className="group block">
                 <motion.div
-                  whileHover={{ y: -8 }}
-                  transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                  className="group relative aspect-[3/4] overflow-hidden"
+                  whileHover={{ y: -6 }}
+                  transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                  className="text-center"
                 >
-                  <ProductImage
-                    src={category.image}
-                    alt={category.name}
-                    fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-110"
-                    sizes="(max-width: 640px) 100vw, 25vw"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-charcoal/80 via-charcoal/20 to-transparent" />
-                  <div className="absolute bottom-0 left-0 right-0 p-6">
-                    <div className="flex items-end justify-between">
-                      <div>
-                        <h3 className="font-heading text-2xl font-bold text-cream">
-                          {category.name}
-                        </h3>
-                        <p className="mt-1 text-sm text-cream/70">
-                          {category.productCount} Products
-                        </p>
-                      </div>
-                      <div className="flex h-10 w-10 items-center justify-center border border-cream/30 text-cream transition-all duration-300 group-hover:border-accent group-hover:bg-accent">
-                        <ArrowUpRight size={18} />
-                      </div>
-                    </div>
+                  <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-cream/15 ring-1 ring-white/15 transition-all duration-300 group-hover:bg-cream/25 group-hover:ring-white/30 group-hover:shadow-glow">
+                    <ProductImage
+                      src={category.image}
+                      alt={category.name}
+                      fill
+                      className="object-contain transition-transform duration-500 group-hover:scale-[1.04]"
+                      sizes="(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 200px"
+                    />
                   </div>
+                  <h3 className="mt-3 text-sm font-semibold text-cream transition-colors group-hover:text-white md:text-base">
+                    {category.name}
+                  </h3>
                 </motion.div>
               </Link>
             </StaggerItem>

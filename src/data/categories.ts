@@ -2,31 +2,33 @@ import { CategoryItem } from "@/types";
 
 export const categories: CategoryItem[] = [
   {
-    id: "running",
-    name: "Running",
-    description: "Engineered for speed and endurance",
-    image: "/images/categories/running.png",
+    id: "backpacks",
+    name: "Backpacks",
+    image: "/images/categories/backpacks.png",
+    productCount: 41,
+  },
+  {
+    id: "tents",
+    name: "Tents",
+    image: "/images/categories/tents.png",
+    productCount: 22,
+  },
+  {
+    id: "lighting",
+    name: "Lighting",
+    image: "/images/categories/lighting.png",
     productCount: 24,
   },
   {
-    id: "lifestyle",
-    name: "Lifestyle",
-    description: "Everyday comfort meets iconic style",
-    image: "/images/categories/lifestyle.png",
+    id: "accessories",
+    name: "Drinkware",
+    image: "/images/categories/accessories.png",
     productCount: 32,
   },
   {
-    id: "basketball",
-    name: "Basketball",
-    description: "Court-ready performance footwear",
-    image: "/images/categories/basketball.png",
+    id: "furniture",
+    name: "Camp Seats",
+    image: "/images/categories/furniture.png",
     productCount: 18,
-  },
-  {
-    id: "training",
-    name: "Training",
-    description: "Built for your hardest workouts",
-    image: "/images/categories/training.png",
-    productCount: 21,
   },
 ];

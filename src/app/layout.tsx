@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Velora — Premium Footwear",
+  title: "Ventura — Camping & Outdoor Gear",
   description:
-    "Discover curated premium sneakers and shoes from the world's most iconic brands.",
+    "Premium camping equipment, backpacks, tents, and outdoor essentials for your next adventure.",
 };
 
 export default function RootLayout({
