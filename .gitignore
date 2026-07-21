@@ -13,3 +13,5 @@ out/
 !prisma/seed.db
 .env
 .env*.local
+
+*.db-journal
