@@ -4,15 +4,15 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, ShoppingBag, Search, Tent } from "lucide-react";
+import { Menu, X, ShoppingBag, Search, Tent, Heart } from "lucide-react";
 import { useStore } from "@/store/useStore";
 import { cn } from "@/lib/utils";
 
 const navLinks = [
   { href: "/", label: "Home" },
   { href: "/products", label: "Shop" },
-  { href: "/products?category=backpacks", label: "Backpacks" },
-  { href: "/products?category=tents", label: "Tents" },
+  { href: "/about", label: "About" },
+  { href: "/contact", label: "Contact" },
 ];
 
 export default function Header() {
@@ -22,7 +22,9 @@ export default function Header() {
   const [mounted, setMounted] = useState(false);
   const initStore = useStore((s) => s.init);
   const cartCount = useStore((s) => s.getCartCount());
+  const wishlistCount = useStore((s) => s.wishlist.length);
   const displayCartCount = mounted ? cartCount : 0;
+  const displayWishlistCount = mounted ? wishlistCount : 0;
 
   useEffect(() => {
     setMounted(true);
@@ -40,11 +42,14 @@ export default function Header() {
     setMobileOpen(false);
   }, [pathname]);
 
+  // Home has a light hero; other pages use dark banners — keep nav solid there
+  const solidNav = pathname !== "/" || scrolled || mobileOpen;
+
   return (
     <header
       className={cn(
         "fixed left-0 right-0 top-0 z-50 transition-all duration-300",
-        scrolled || mobileOpen
+        solidNav
           ? "border-b border-sand/70 bg-white/95 py-3 shadow-sm backdrop-blur-md"
           : "bg-transparent py-5"
       )}
@@ -81,6 +86,18 @@ export default function Header() {
             aria-label="Search products"
           >
             <Search size={18} strokeWidth={1.75} />
+          </Link>
+          <Link
+            href="/wishlist"
+            className="relative hidden h-10 w-10 items-center justify-center rounded-full text-charcoal transition-colors hover:bg-sage-soft sm:inline-flex"
+            aria-label={`Wishlist, ${displayWishlistCount} items`}
+          >
+            <Heart size={18} strokeWidth={1.75} />
+            {displayWishlistCount > 0 && (
+              <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1 text-[10px] font-bold text-cream">
+                {displayWishlistCount}
+              </span>
+            )}
           </Link>
           <Link
             href="/cart"

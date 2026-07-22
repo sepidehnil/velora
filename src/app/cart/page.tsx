@@ -11,7 +11,7 @@ import Button from "@/components/ui/Button";
 import PageTransition from "@/components/motion/PageTransition";
 import ScrollReveal from "@/components/motion/ScrollReveal";
 import { useStore } from "@/store/useStore";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice, parseProductRouteId } from "@/lib/utils";
 import { tapScale } from "@/lib/animations";
 
 export default function CartPage() {
@@ -70,9 +70,11 @@ export default function CartPage() {
           <div className="grid gap-12 lg:grid-cols-3">
             <div className="space-y-5 lg:col-span-2">
               <AnimatePresence>
-                {cart.map((item) => (
+                {cart.map((item) => {
+                  const { productId } = parseProductRouteId(item.product.id);
+                  return (
                   <motion.div
-                    key={item.product.id}
+                    key={`${item.product.id}-${item.color ?? ""}`}
                     layout
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
@@ -80,7 +82,7 @@ export default function CartPage() {
                     className="flex gap-4 rounded-card border border-sand bg-white p-4 shadow-card md:gap-6 md:p-6"
                   >
                     <Link
-                      href={`/products/${item.product.id}`}
+                      href={`/products/${productId}`}
                       className="relative h-28 w-24 shrink-0 overflow-hidden rounded-2xl bg-sage-soft md:h-32 md:w-28"
                     >
                       <ProductImage
@@ -97,16 +99,19 @@ export default function CartPage() {
                             {item.product.brand}
                           </p>
                           <Link
-                            href={`/products/${item.product.id}`}
+                            href={`/products/${productId}`}
                             className="text-lg font-semibold text-charcoal transition-colors hover:text-sage-dark"
                           >
                             {item.product.name}
+                            {item.color ? ` — ${item.color}` : ""}
                           </Link>
                         </div>
                         <motion.button
                           type="button"
                           whileTap={tapScale}
-                          onClick={() => removeFromCart(item.product.id)}
+                          onClick={() =>
+                            removeFromCart(item.product.id, item.color)
+                          }
                           className="text-stone transition-colors hover:text-charcoal"
                           aria-label="Remove item"
                         >
@@ -120,7 +125,8 @@ export default function CartPage() {
                             onClick={() =>
                               updateQuantity(
                                 item.product.id,
-                                item.quantity - 1
+                                item.quantity - 1,
+                                item.color
                               )
                             }
                             className="flex h-8 w-8 items-center justify-center rounded-full border border-sand transition-colors hover:border-sage"
@@ -136,7 +142,8 @@ export default function CartPage() {
                             onClick={() =>
                               updateQuantity(
                                 item.product.id,
-                                item.quantity + 1
+                                item.quantity + 1,
+                                item.color
                               )
                             }
                             className="flex h-8 w-8 items-center justify-center rounded-full border border-sand transition-colors hover:border-sage"
@@ -151,7 +158,8 @@ export default function CartPage() {
                       </div>
                     </div>
                   </motion.div>
-                ))}
+                  );
+                })}
               </AnimatePresence>
             </div>
 

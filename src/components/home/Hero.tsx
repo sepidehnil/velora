@@ -3,7 +3,7 @@
 import ProductImage from "@/components/ui/ProductImage";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowRight, Users, Package } from "lucide-react";
+import { ArrowRight, Package, Award } from "lucide-react";
 import Container from "@/components/ui/Container";
 
 export default function Hero() {
@@ -82,10 +82,10 @@ export default function Hero() {
             className="absolute left-0 top-[20%] z-10 flex items-center gap-2 rounded-2xl bg-white px-3.5 py-2.5 text-xs font-semibold text-charcoal shadow-card sm:left-4 sm:rounded-full sm:px-4 sm:text-sm"
           >
             <span className="flex h-8 w-8 items-center justify-center rounded-full bg-sage-soft text-sage-dark">
-              <Users size={14} />
+              <Award size={14} />
             </span>
             <span>
-              <span className="text-sage-dark">+10,999</span> happy campers
+              <span className="text-sage-dark">12</span> curated products
             </span>
           </motion.div>
 
@@ -103,7 +103,7 @@ export default function Hero() {
               <Package size={14} />
             </span>
             <span>
-              <span className="text-accent">+400</span> products
+              <span className="text-accent">8</span> outdoor brands
             </span>
           </motion.div>
         </motion.div>

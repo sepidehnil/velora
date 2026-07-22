@@ -1,8 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useEffect } from "react";
-import ProductImage from "@/components/ui/ProductImage";
+import { useEffect, useState } from "react";
+import ProductColorImage from "@/components/ui/ProductColorImage";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
@@ -14,42 +13,95 @@ import {
   Plus,
   ShoppingBag,
   Check,
+  Truck,
+  PackageCheck,
 } from "lucide-react";
 import MainLayout from "@/components/layout/MainLayout";
 import Container from "@/components/ui/Container";
 import Button from "@/components/ui/Button";
 import ProductCard from "@/components/products/ProductCard";
 import PageTransition from "@/components/motion/PageTransition";
-import ScrollReveal, { StaggerReveal, StaggerItem } from "@/components/motion/ScrollReveal";
+import ScrollReveal, {
+  StaggerReveal,
+  StaggerItem,
+} from "@/components/motion/ScrollReveal";
 import { useCatalog } from "@/hooks/useCatalog";
 import { useStore } from "@/store/useStore";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice, cn, parseProductRouteId } from "@/lib/utils";
 import { tapScale } from "@/lib/animations";
 import { Product } from "@/types";
+import {
+  getProductDetails,
+  getProductColorVariants,
+} from "@/data/productDetails";
+
+function colorIndexForSlug(product: Product, colorSlug?: string) {
+  if (!colorSlug) return 0;
+  const variants = getProductColorVariants(product);
+  const index = variants.findIndex(
+    (v) => v.name.toLowerCase() === colorSlug.toLowerCase()
+  );
+  return index >= 0 ? index : 0;
+}
 
 export default function ProductDetailPage() {
   const params = useParams();
   const router = useRouter();
-  const { products } = useCatalog();
+  const { products, loading: catalogLoading } = useCatalog();
   const [product, setProduct] = useState<Product | null>(null);
+  const [resolving, setResolving] = useState(true);
   const { addToCart, toggleWishlist, isInWishlist } = useStore();
 
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
+  const [activeColor, setActiveColor] = useState(0);
+
+  const routeId = (params.id as string) ?? "";
+  const { productId, colorSlug } = parseProductRouteId(routeId);
 
   useEffect(() => {
-    const local = products.find((p) => p.id === (params.id as string));
+    let active = true;
+    setResolving(true);
+    setProduct(null);
+
+    const local = products.find((p) => p.id === productId);
     if (local) {
       setProduct(local);
+      setActiveColor(colorIndexForSlug(local, colorSlug));
+      setResolving(false);
       return;
     }
 
-    fetch(`/api/products/${params.id as string}`)
+    if (catalogLoading) return;
+
+    fetch(`/api/products/${productId}`)
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
-        if (data?.product) setProduct(data.product as Product);
+        if (!active) return;
+        if (data?.product) {
+          const next = data.product as Product;
+          setProduct(next);
+          setActiveColor(colorIndexForSlug(next, colorSlug));
+        }
+      })
+      .finally(() => {
+        if (active) setResolving(false);
       });
-  }, [params.id, products]);
+
+    return () => {
+      active = false;
+    };
+  }, [productId, colorSlug, products, catalogLoading]);
+
+  if (resolving || catalogLoading) {
+    return (
+      <MainLayout>
+        <Container className="flex min-h-[60vh] flex-col items-center justify-center gap-4 pt-32">
+          <p className="text-stone">Loading product...</p>
+        </Container>
+      </MainLayout>
+    );
+  }
 
   if (!product) {
     return (
@@ -68,9 +120,16 @@ export default function ProductDetailPage() {
     .filter((p) => p.id !== product.id && p.category === product.category)
     .slice(0, 4);
   const wished = isInWishlist(product.id);
+  const colorVariants = getProductColorVariants(product);
+  const selectedColor = colorVariants[activeColor] ?? colorVariants[0];
+  const details = getProductDetails(product);
 
   const handleAddToCart = () => {
-    addToCart({ product, quantity });
+    addToCart({
+      product,
+      quantity,
+      color: selectedColor.name,
+    });
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   };
@@ -90,15 +149,49 @@ export default function ProductDetailPage() {
 
           <div className="grid gap-10 lg:grid-cols-2 lg:gap-16">
             <ScrollReveal direction="left">
-              <div className="relative aspect-square overflow-hidden rounded-card bg-sage-soft">
-                <ProductImage
-                  src={product.image}
-                  alt={product.name}
-                  fill
-                  className="object-cover"
-                  priority
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                />
+              <div className="space-y-3">
+                <div className="relative aspect-square overflow-hidden rounded-card bg-sage-soft">
+                  <ProductColorImage
+                    src={product.image}
+                    alt={`${product.name} in ${selectedColor.name}`}
+                    hex={selectedColor.hex}
+                    tint={selectedColor.tint !== false}
+                    fill
+                    className="object-cover"
+                    priority
+                    sizes="(max-width: 1024px) 100vw, 50vw"
+                  />
+                </div>
+                <div className="grid grid-cols-4 gap-2">
+                  {colorVariants.map((variant, i) => (
+                    <button
+                      key={variant.id}
+                      type="button"
+                      onClick={() => setActiveColor(i)}
+                      className={cn(
+                        "relative aspect-square overflow-hidden rounded-2xl bg-sage-soft ring-2 transition",
+                        activeColor === i
+                          ? "ring-sage"
+                          : "ring-transparent hover:ring-sand"
+                      )}
+                      aria-label={`${product.name} in ${variant.name}`}
+                      title={`${variant.name} — ${formatPrice(product.price)}`}
+                    >
+                      <ProductColorImage
+                        src={product.image}
+                        alt=""
+                        hex={variant.hex}
+                        tint={variant.tint !== false}
+                        fill
+                        className="object-cover"
+                        sizes="120px"
+                      />
+                      <span className="absolute inset-x-0 bottom-0 bg-charcoal/55 px-1 py-0.5 text-center text-[10px] font-medium text-cream">
+                        {variant.name}
+                      </span>
+                    </button>
+                  ))}
+                </div>
               </div>
             </ScrollReveal>
 
@@ -109,7 +202,7 @@ export default function ProductDetailPage() {
                     <p className="text-xs font-semibold uppercase tracking-widest text-sage">
                       {product.brand}
                     </p>
-                    <h1 className="mt-2 text-3xl font-bold text-charcoal md:text-4xl">
+                    <h1 className="mt-2 font-heading text-3xl font-semibold text-charcoal md:text-4xl">
                       {product.name}
                     </h1>
                   </div>
@@ -118,11 +211,15 @@ export default function ProductDetailPage() {
                     whileTap={tapScale}
                     onClick={() => toggleWishlist(product.id)}
                     className="flex h-11 w-11 items-center justify-center rounded-full border border-sand transition-colors hover:border-sage"
-                    aria-label={wished ? "Remove from wishlist" : "Add to wishlist"}
+                    aria-label={
+                      wished ? "Remove from wishlist" : "Add to wishlist"
+                    }
                   >
                     <Heart
                       size={20}
-                      className={wished ? "fill-accent text-accent" : "text-charcoal"}
+                      className={
+                        wished ? "fill-accent text-accent" : "text-charcoal"
+                      }
                     />
                   </motion.button>
                 </div>
@@ -155,6 +252,48 @@ export default function ProductDetailPage() {
                       {formatPrice(product.originalPrice)}
                     </span>
                   )}
+                </div>
+
+                <div className="mt-5">
+                  <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-charcoal">
+                    Color — {selectedColor.name}
+                  </p>
+                  <div className="flex flex-wrap gap-2.5">
+                    {colorVariants.map((variant, i) => (
+                      <button
+                        key={variant.id}
+                        type="button"
+                        onClick={() => setActiveColor(i)}
+                        className={cn(
+                          "flex h-9 w-9 items-center justify-center rounded-full border-2 transition",
+                          activeColor === i
+                            ? "border-charcoal scale-110"
+                            : "border-transparent hover:border-sand"
+                        )}
+                        aria-label={`Select ${variant.name}`}
+                        title={`${variant.name} — ${formatPrice(product.price)}`}
+                      >
+                        <span
+                          className="h-6 w-6 rounded-full ring-1 ring-black/10"
+                          style={{ backgroundColor: variant.hex }}
+                        />
+                      </button>
+                    ))}
+                  </div>
+                  <p className="mt-2 text-xs text-stone">
+                    Same product &amp; price for every colorway
+                  </p>
+                </div>
+
+                <div className="mt-4 flex flex-wrap gap-3 text-xs font-medium text-sage-dark">
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-sage-soft px-3 py-1.5">
+                    <PackageCheck size={14} />
+                    In stock
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-sage-soft px-3 py-1.5">
+                    <Truck size={14} />
+                    Ships in {details.shipsIn}
+                  </span>
                 </div>
 
                 <p className="mt-6 text-sm leading-relaxed text-stone">
@@ -226,13 +365,69 @@ export default function ProductDetailPage() {
               </div>
             </ScrollReveal>
           </div>
+
+          <div className="mt-14 grid gap-8 lg:grid-cols-2">
+            <ScrollReveal>
+              <h2 className="font-heading text-2xl font-semibold text-charcoal">
+                Specs
+              </h2>
+              <dl className="mt-5 divide-y divide-sand rounded-card border border-sand bg-white">
+                {details.specs.map((spec) => (
+                  <div
+                    key={spec.label}
+                    className="flex items-start justify-between gap-4 px-5 py-4 text-sm"
+                  >
+                    <dt className="font-medium text-charcoal">{spec.label}</dt>
+                    <dd className="text-right text-stone">{spec.value}</dd>
+                  </div>
+                ))}
+              </dl>
+            </ScrollReveal>
+
+            <ScrollReveal delay={0.08}>
+              <h2 className="font-heading text-2xl font-semibold text-charcoal">
+                Reviews
+              </h2>
+              <div className="mt-5 space-y-4">
+                {details.reviews.map((review) => (
+                  <article
+                    key={review.id}
+                    className="rounded-card border border-sand bg-white p-5"
+                  >
+                    <div className="flex items-center justify-between gap-3">
+                      <p className="text-sm font-semibold text-charcoal">
+                        {review.author}
+                      </p>
+                      <p className="text-xs text-stone">{review.date}</p>
+                    </div>
+                    <div className="mt-2 flex gap-1">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <Star
+                          key={i}
+                          size={12}
+                          className={
+                            i < review.rating
+                              ? "fill-accent text-accent"
+                              : "text-sand"
+                          }
+                        />
+                      ))}
+                    </div>
+                    <p className="mt-3 text-sm leading-relaxed text-stone">
+                      {review.comment}
+                    </p>
+                  </article>
+                ))}
+              </div>
+            </ScrollReveal>
+          </div>
         </Container>
 
         {related.length > 0 && (
           <section className="section-padding bg-sage-soft">
             <Container>
               <ScrollReveal className="mb-10">
-                <h2 className="text-3xl font-bold text-charcoal">
+                <h2 className="font-heading text-3xl font-semibold text-charcoal">
                   You May Also Like
                 </h2>
               </ScrollReveal>

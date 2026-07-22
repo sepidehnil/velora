@@ -1,5 +1,6 @@
 import MainLayout from "@/components/layout/MainLayout";
 import Hero from "@/components/home/Hero";
+import TrustBar from "@/components/home/TrustBar";
 import Categories from "@/components/home/Categories";
 import FeaturedProducts from "@/components/home/FeaturedProducts";
 import ProductShowcase from "@/components/home/ProductShowcase";
@@ -10,6 +11,7 @@ export default function HomePage() {
   return (
     <MainLayout>
       <Hero />
+      <TrustBar />
       <Categories />
       <FeaturedProducts />
       <ProductShowcase />

@@ -28,6 +28,8 @@ export interface Product {
 export interface CartItem {
   product: Product;
   quantity: number;
+  /** Selected colorway name, e.g. "Charcoal" */
+  color?: string;
 }
 
 export interface CategoryItem {

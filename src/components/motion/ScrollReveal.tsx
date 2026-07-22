@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useInView } from "framer-motion";
-import { useRef, ReactNode } from "react";
+import { Children, ReactNode, useRef } from "react";
 import { fadeUp, ease } from "@/lib/animations";
 import { cn } from "@/lib/utils";
 
@@ -57,15 +57,18 @@ export function StaggerReveal({
 }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-60px" });
+  // Remount when async items arrive so newly added children aren't stuck at opacity 0
+  const itemKey = Children.count(children);
 
   return (
     <motion.div
+      key={itemKey}
       ref={ref}
       variants={{
         hidden: { opacity: 0 },
         visible: {
           opacity: 1,
-          transition: { staggerChildren: 0.1, delayChildren: 0.1 },
+          transition: { staggerChildren: 0.1, delayChildren: 0.05 },
         },
       }}
       initial="hidden"

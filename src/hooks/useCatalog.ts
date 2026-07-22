@@ -23,29 +23,54 @@ const defaultCatalog: CatalogPayload = {
 };
 
 let cache: CatalogPayload | null = null;
+let pending: Promise<CatalogPayload> | null = null;
+
+function loadCatalog(): Promise<CatalogPayload> {
+  if (cache) return Promise.resolve(cache);
+
+  if (!pending) {
+    pending = fetch("/api/catalog")
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to load catalog");
+        return res.json() as Promise<CatalogPayload>;
+      })
+      .then((json) => {
+        cache = json;
+        pending = null;
+        return json;
+      })
+      .catch((error) => {
+        pending = null;
+        throw error;
+      });
+  }
+
+  return pending;
+}
 
 export function useCatalog() {
   const [data, setData] = useState<CatalogPayload>(cache ?? defaultCatalog);
   const [loading, setLoading] = useState(!cache);
 
   useEffect(() => {
-    if (cache) return;
-
     let active = true;
-    setLoading(true);
 
-    fetch("/api/catalog")
-      .then((res) => res.json())
-      .then((json: CatalogPayload) => {
-        cache = json;
-        if (active) {
-          setData(json);
-        }
+    if (cache) {
+      setData(cache);
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
+    void loadCatalog()
+      .then((json) => {
+        if (!active) return;
+        setData(json);
+        setLoading(false);
       })
-      .finally(() => {
-        if (active) {
-          setLoading(false);
-        }
+      .catch(() => {
+        if (!active) return;
+        setLoading(false);
       });
 
     return () => {
@@ -55,4 +80,3 @@ export function useCatalog() {
 
   return { ...data, loading };
 }
-
